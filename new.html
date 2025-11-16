@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashAutomationPlus+</title>
+    <style>
+        :root {
+            --primary-color: #00aaff;
+            --primary-hover: #0088cc;
+            --dark-bg: #1a1a1a;
+            --medium-bg: #2a2a2a;
+            --light-bg: #3a3a3a;
+            --text-color: #f0f0f0;
+            --text-muted: #aaa;
+            --error-color: #ff4444;
+            --success-color: #00c851;
+            --warn-color: #ffbb33;
+            --border-radius: 8px;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            opacity: 0.15; /* Default opacity for auth pages */
+            filter: blur(2px);
+            transition: opacity 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 40px auto;
+            background-color: rgba(30, 30, 30, 0.9);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--light-bg);
+        }
+
+        .auth-container h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--medium-bg);
+            border: 1px solid var(--light-bg);
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-bg);
+        }
+        .btn-secondary:hover {
+            background-color: #4a4a4a;
+        }
+        
+        .btn-danger {
+            background-color: var(--error-color);
+        }
+        .btn-danger:hover {
+            background-color: #cc0000;
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        #dashboard-page {
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--light-bg);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+        nav button:hover {
+            color: var(--primary-color);
+        }
+        #logout-button {
+            color: var(--error-color);
+        }
+        #logout-button:hover {
+            color: #ff7777;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .grid-container {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .card {
+            background-color: var(--medium-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            border: 1px solid var(--light-bg);
+        }
+
+        .card h2 {
+            font-weight: 600;
+            border-bottom: 1px solid var(--light-bg);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        #status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+        .status-item h3 {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .status-item p {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .status-item p.connected { color: var(--success-color); }
+        .status-item p.disconnected { color: var(--error-color); }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            background-color: var(--dark-bg);
+            border: 1px solid var(--light-bg);
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            font-size: 14px;
+            padding: 10px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--light-bg);
+            border-radius: var(--border-radius);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-bg);
+            vertical-align: middle;
+        }
+        
+        thead th {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            position: sticky;
+            top: 0;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #2f2f2f;
+        }
+        
+        tbody tr:hover {
+            background-color: #3f3f3f;
+        }
+
+        .tweet-text {
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+            max-width: 300px;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-badge.pending { background-color: #4a4a4a; color: #f0f0f0; }
+        .status-badge.scheduled { background-color: var(--warn-color); color: #000; }
+        .status-badge.posted { background-color: var(--success-color); color: #fff; }
+        .status-badge.failed { background-color: var(--error-color); color: #fff; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .action-btn.delete { color: var(--error-color); }
+        .action-btn.delete:hover { color: #ff7777; }
+        .action-btn.edit { color: var(--primary-color); }
+        .action-btn.edit:hover { color: #55ccff; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--medium-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid var(--light-bg);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        .close-btn {
+            color: var(--text-muted);
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            color: var(--text-color);
+        }
+
+        #toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: bottom 0.5s;
+            z-index: 1000;
+        }
+        #toast.show {
+            bottom: 30px;
+        }
+        #toast.success { background-color: var(--success-color); color: #fff; }
+        #toast.error { background-color: var(--error-color); color: #fff; }
+
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+
+        .auth-container.active {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* === NEW STYLES START === */
+        .disclaimer {
+            background-color: rgba(255, 187, 51, 0.1); /* --warn-color with alpha */
+            border: 1px solid var(--warn-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        .disclaimer p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        .disclaimer b {
+            color: var(--warn-color);
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 30px 20px 20px 20px;
+            border-top: 1px solid var(--light-bg);
+            margin-top: 30px;
+            color: var(--text-muted);
+        }
+        .footer-links {
+            margin-bottom: 15px;
+        }
+        .footer-links a, .footer-links span {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 14px;
+        }
+        .footer-links a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        .footer-credit {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        /* Auth page specific footer credit */
+        .auth-container .footer-credit {
+             margin-top: 25px;
+             text-align: center;
+        }
+        /* === NEW STYLES END === */
+    </style>
+</head>
+<body>
+    
+    <video autoplay loop muted playsinline id="bg-video">
+        <source src="https://videos.pexels.com/video-files/3254006/3254006-hd_1920_1080_25fps.mp4" type="video/mp4">
+    </video>
+
+    <div id="login-page" class="auth-container page">
+        <form id="login-form">
+            <h1>FlashAutomationPlus+</h1>
+            <div class="disclaimer">
+                <p><b>Warning:</b> This tool uses official APIs. However, automation can still violate platform Terms of Service. Use at your own risk. The admin is not responsible for any suspended accounts.</p>
+            </div>
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="auth-link">
+                <a href="#" id="show-forgot-link">Forgot Password?</a>
+            </div>
+            <div class="auth-link" style="margin-top: 10px;">
+                Don't have an account? <a href="#" id="show-signup-link">Sign Up</a>
+            </div>
+        </form>
+        <div class="footer-credit">
+            Created with ❤️ by Sudip
+        </div>
+    </div>
+
+    <div id="signup-page" class="auth-container page">
+        <form id="signup-form">
+            <h1>Create Account</h1>
+            <div class="disclaimer">
+                <p><b>Warning:</b> This tool uses official APIs. However, automation can still violate platform Terms of Service. Use at your own risk. The admin is not responsible for any suspended accounts.</p>
+            </div>
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-key">Sign Up Key (from Telegram Bot)</label>
+                <input type="text" id="signup-key" required>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+            <div class="auth-link">
+                Already have an account? <a href="#" id="show-login-link">Login</a>
+            </div>
+        </form>
+        <div class="footer-credit">
+            Created with ❤️ by Sudip
+        </div>
+    </div>
+
+    <div id="forgot-page" class="auth-container page">
+        <form id="forgot-form-email">
+            <h1>Forgot Password</h1>
+            <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">
+                Enter your email. An admin will be notified to send you a 4-digit code.
+            </p>
+            <div class="form-group">
+                <label for="forgot-email">Email</label>
+                <input type="email" id="forgot-email" required>
+            </div>
+            <button type="submit" class="btn">Send Code Request</button>
+            <div class="auth-link">
+                <a href="#" id="show-login-link-2">Back to Login</a>
+            </div>
+        </form>
+        <form id="forgot-form-reset" class="hidden">
+            <h1>Reset Password</h1>
+            <div class="form-group">
+                <label for="forgot-code">4-Digit Code (from Email)</label>
+                <input type="text" id="forgot-code" required>
+            </div>
+            <div class="form-group">
+                <label for="forgot-new-password">New Password</label>
+                <input type="password" id="forgot-new-password" required>
+            </div>
+            <button type="submit" class="btn">Reset Password</button>
+            <div class="auth-link">
+                <a href="#" id="show-login-link-3">Back to Login</a>
+            </div>
+        </form>
+        <div class="footer-credit">
+            Created with ❤️ by Sudip
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="container page">
+        <header>
+            <h1>FlashAutomation+</h1>
+            <nav>
+                <button id="refresh-button">🔄 Refresh</button>
+                <button id="logout-button">Logout</button>
+            </nav>
+        </header>
+
+        <div class="grid-container">
+            <div class="left-column">
+                <div class="card">
+                    <h2>Quick Status</h2>
+                    <div id="status-grid">
+                        <div class="status-item">
+                            <h3>Accounts</h3>
+                            <p id="status-accounts">0</p>
+                        </div>
+                        <div class="status-item">
+                            <h3>Pending Tweets</h3>
+                            <p id="status-pending">0</p>
+                        </div>
+                        <div class="status-item">
+                            <h3>Link Bot</h3>
+                            <p id="status-linkbot" class="disconnected">Offline</p>
+                        </div>
+                        <div class="status-item">
+                            <h3>Server Time</h3>
+                            <p id="status-time" style="font-size: 14px;">--:--:--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 30px;">
+                    <h2>Add Tweet(s)</h2>
+                    <form id="add-tweet-form">
+                        <div class="form-group">
+                            <label for="add-tweet-text">Tweet Text (separate multiple with a blank line)</label>
+                            <textarea id="add-tweet-text" rows="5"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Save Tweet(s)</button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin-top: 30px;">
+                    <h2>Mass Schedule</h2>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">
+                        This will schedule your pending tweets (oldest first) to your accounts (oldest first).
+                        If you have more tweets than accounts, the extra tweets will be <b>deleted</b>.
+                    </p>
+                    <form id="schedule-form">
+                        <div class="form-group">
+                            <label for="schedule-date">Date (IST)</label>
+                            <input type="date" id="schedule-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="schedule-time">Time (IST)</label>
+                            <input type="time" id="schedule-time" required>
+                        </div>
+                        <button type="submit" class="btn">Schedule Tweets</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="border: none; margin: 0; padding: 0;">Accounts</h2>
+                        <button class="btn btn-secondary" id="show-add-account-modal" style="width: auto; padding: 10px 15px;">+ Add Account</button>
+                    </div>
+                    <div class="table-wrapper" style="margin-top: 20px;">
+                        <table id="accounts-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>API Key</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="border: none; margin: 0; padding: 0;">Tweets</h2>
+                        <button class="btn btn-danger" id="delete-all-tweets-btn" style="width: auto; padding: 10px 15px;">Delete All</button>
+                    </div>
+                    <div class="table-wrapper" style="margin-top: 20px; max-height: 600px;">
+                        <table id="tweets-table">
+                            <thead>
+                                <tr>
+                                    <th>Tweet</th>
+                                    <th>Status</th>
+                                    <th>Account</th>
+                                    <th>Scheduled For (IST)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-links">
+                <a href="https://t.me/TweetAutomation_bot" target="_blank">Telegram Bot</a>
+                <span>&bull;</span>
+                <a href="https://t.me/flashautomationplus" target="_blank">Channel</a>
+                <span>&bull;</span>
+                <a href="mailto:axl200ff@gmail.com">Contact Admin</a>
+            </div>
+            <div class="footer-credit">
+                Created with ❤️ by Sudip
+            </div>
+        </footer>
+    </div>
+
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="account-modal-title">Add New Account</h2>
+                <span class="close-btn" id="close-account-modal">&times;</span>
+            </div>
+            <form id="account-form">
+                <input type="hidden" id="account-form-mode" value="add">
+                
+                <div class="form-group">
+                    <label for="account-username">X Username (e.g., myhandle)</label>
+                    <input type="text" id="account-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-api-key">API Key (Consumer Key)</label>
+                    <input type="password" id="account-api-key" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-api-secret">API Secret (Consumer Secret)</label>
+                    <input type="password" id="account-api-secret" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-access-token">Access Token</label>
+                    <input type="password" id="account-access-token" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-access-token-secret">Access Token Secret</label>
+                    <input type="password" id="account-access-token-secret" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-bearer-token">Bearer Token (Optional)</label>
+                    <input type="password" id="account-bearer-token">
+                </div>
+                <button type="submit" class="btn">Save Account</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- State & Config ---
+            const API_BASE = ''; // API is on the same origin
+            let ACCESS_KEY = localStorage.getItem('access_key');
+
+            // --- Page Selectors ---
+            const pages = {
+                login: document.getElementById('login-page'),
+                signup: document.getElementById('signup-page'),
+                forgot: document.getElementById('forgot-page'),
+                dashboard: document.getElementById('dashboard-page')
+            };
+
+            // --- Auth Forms ---
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const forgotFormEmail = document.getElementById('forgot-form-email');
+            const forgotFormReset = document.getElementById('forgot-form-reset');
+
+            // --- Auth Links ---
+            document.getElementById('show-signup-link').addEventListener('click', (e) => { e.preventDefault(); showPage('signup'); });
+            document.getElementById('show-login-link').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-login-link-2').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-login-link-3').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-forgot-link').addEventListener('click', (e) => { e.preventDefault(); showPage('forgot'); });
+
+            // --- Dashboard Elements ---
+            const logoutButton = document.getElementById('logout-button');
+            const refreshButton = document.getElementById('refresh-button');
+            const statusAccounts = document.getElementById('status-accounts');
+            const statusPending = document.getElementById('status-pending');
+            const statusLinkbot = document.getElementById('status-linkbot');
+            const statusTime = document.getElementById('status-time');
+            const accountsTableBody = document.querySelector('#accounts-table tbody');
+            const tweetsTableBody = document.querySelector('#tweets-table tbody');
+
+            // --- Modals & Forms ---
+            const accountModal = document.getElementById('account-modal');
+            const accountForm = document.getElementById('account-form');
+            const addTweetForm = document.getElementById('add-tweet-form');
+            const scheduleForm = document.getElementById('schedule-form');
+            const deleteAllTweetsBtn = document.getElementById('delete-all-tweets-btn');
+
+            // --- Toast ---
+            const toast = document.getElementById('toast');
+
+            // --- Utility Functions ---
+
+            function showPage(pageName) {
+                // --- MODIFIED SECTION ---
+                // Show video on all pages, but change opacity
+                const bgVideo = document.getElementById('bg-video');
+                bgVideo.style.display = 'block';
+
+                if (pageName === 'dashboard') {
+                    bgVideo.style.opacity = '0.08'; // Less opacity for dashboard
+                } else {
+                    bgVideo.style.opacity = '0.15'; // Original opacity for auth
+                }
+                // --- END MODIFIED SECTION ---
+
+                Object.keys(pages).forEach(key => {
+                    pages[key].classList.remove('active');
+                });
+                pages[pageName].classList.add('active');
+
+                // Reset forgot password form
+                if(pageName === 'forgot') {
+                    forgotFormEmail.classList.remove('hidden');
+                    forgotFormReset.classList.add('hidden');
+                    forgotFormEmail.reset();
+                    forgotFormReset.reset();
+                }
+            }
+
+            function showToast(message, type = 'success') {
+                toast.textContent = message;
+                toast.className = type;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            async function apiRequest(endpoint, options = {}) {
+                try {
+                    options.headers = options.headers || {};
+                    options.headers['X-Access-Key'] = ACCESS_KEY;
+                    if (options.body) {
+                        options.headers['Content-Type'] = 'application/json';
+                        options.body = JSON.stringify(options.body);
+                    }
+
+                    const response = await fetch(`${API_BASE}${endpoint}`, options);
+
+                    if (response.status === 401) {
+                        // Unauthorized or expired key
+                        logout();
+                        return null;
+                    }
+                    
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'An error occurred');
+                    }
+                    
+                    return data;
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                    return null;
+                }
+            }
+
+            // --- Auth Logic ---
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/login`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    ACCESS_KEY = data.access_key;
+                    localStorage.setItem('access_key', ACCESS_KEY);
+                    showToast('Login successful!', 'success');
+                    initializeApp();
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
+
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const web_key = document.getElementById('signup-key').value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/signup`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, password, web_key })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    showToast('Sign up successful! Please log in.', 'success');
+                    showPage('login');
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
+
+            forgotFormEmail.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgot-email').value;
+                try {
+                    const response = await fetch(`${API_BASE}/api/forgot_password`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    showToast(data.message, 'success');
+                    forgotFormEmail.classList.add('hidden');
+                    forgotFormReset.classList.remove('hidden');
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
+
+            forgotFormReset.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgot-email').value;
+                const code = document.getElementById('forgot-code').value;
+                const new_password = document.getElementById('forgot-new-password').value;
+                
+                try {
+                    // First, verify the code (optional but good practice, though our backend handles it)
+                    // We'll just go straight to reset
+                    const response = await fetch(`${API_BASE}/api/reset_password`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, code, new_password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    showToast(data.message, 'success');
+                    showPage('login');
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                }
+            });
+
+            function logout() {
+                ACCESS_KEY = null;
+                localStorage.removeItem('access_key');
+                showPage('login');
+            }
+            logoutButton.addEventListener('click', logout);
+            refreshButton.addEventListener('click', loadDashboardData);
+
+            // --- Dashboard Logic ---
+
+            async function initializeApp() {
+                if (ACCESS_KEY) {
+                    // Verify key
+                    const data = await apiRequest('/api/verify_key');
+                    if (data && data.status === 'ok') {
+                        showPage('dashboard');
+                        loadDashboardData();
+                    } else {
+                        logout();
+                    }
+                } else {
+                    showPage('login');
+                }
+            }
+
+            async function loadDashboardData() {
+                loadStatus();
+                loadAccounts();
+                loadTweets();
+            }
+
+            async function loadStatus() {
+                const data = await apiRequest('/api/status');
+                if (!data) return;
+                
+                statusAccounts.textContent = data.account_count;
+                statusPending.textContent = data.pending_tweets;
+                statusTime.textContent = data.server_time_ist;
+                if(data.link_bot_connected) {
+                    statusLinkbot.textContent = 'Online';
+                    statusLinkbot.className = 'connected';
+                } else {
+                    statusLinkbot.textContent = 'Offline';
+                    statusLinkbot.className = 'disconnected';
+                }
+            }
+
+            async function loadAccounts() {
+                const data = await apiRequest('/api/get_accounts');
+                if (!data) return;
+                
+                accountsTableBody.innerHTML = '';
+                if(data.length === 0) {
+                    accountsTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No accounts added.</td></tr>';
+                    return;
+                }
+                
+                data.forEach(acc => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>@${acc.username}</td>
+                        <td>${acc.api_key.substring(0, 4)}...${acc.api_key.slice(-4)}</td>
+                        <td>
+                            <button class="action-btn edit" data-username="${acc.username}">✏️ Edit</button>
+                            <button class="action-btn delete" data-username="${acc.username}">🗑️ Delete</button>
+                        </td>
+                    `;
+                    accountsTableBody.appendChild(tr);
+                });
+            }
+
+            async function loadTweets() {
+                const data = await apiRequest('/api/get_tweets');
+                if (!data) return;
+
+                tweetsTableBody.innerHTML = '';
+                if(data.length === 0) {
+                    tweetsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No tweets found.</td></tr>';
+                    return;
+                }
+                
+                data.forEach(tweet => {
+                    const tr = document.createElement('tr');
+                    
+                    let statusClass = 'pending';
+                    let statusText = tweet.post_status;
+                    let scheduledTime = '--';
+                    
+                    if(tweet.post_status === 'PENDING' && tweet.scheduled_time) {
+                        statusClass = 'scheduled';
+                        statusText = 'SCHEDULED';
+                    } else if (tweet.post_status === 'POSTED') {
+                        statusClass = 'posted';
+                    } else if (tweet.post_status === 'FAILED') {
+                        statusClass = 'failed';
+                    }
+                    
+                    if(tweet.scheduled_time) {
+                        try {
+                            scheduledTime = new Date(tweet.scheduled_time).toLocaleString('en-IN', {
+                                timeZone: 'Asia/Kolkata',
+                                year: 'numeric', month: 'short', day: 'numeric',
+                                hour: 'numeric', minute: '2-digit', hour12: true
+                            });
+                        } catch(e) { scheduledTime = 'Invalid Date'; }
+                    }
+
+                    tr.innerHTML = `
+                        <td><div class="tweet-text">${escapeHTML(tweet.tweet_text)}</div></td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${tweet.account_username ? '@'+tweet.account_username : '--'}</td>
+                        <td>${scheduledTime}</td>
+                        <td>
+                            ${tweet.post_status !== 'POSTED' ?
+                                `<button class="action-btn delete" data-tweet-id="${tweet.id}">🗑️ Delete</button>` :
+                                (tweet.post_link ? `<a href="${tweet.post_link}" target="_blank">View</a>` : 'Posted')}
+                        </td>
+                    `;
+                    tweetsTableBody.appendChild(tr);
+                });
+            }
+
+            function escapeHTML(str) {
+                return str.replace(/[&<>"']/g, function(m) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    }[m];
+                });
+            }
+
+            // --- Modal Handling ---
+            function showAccountModal(mode = 'add', data = {}) {
+                accountForm.reset();
+                document.getElementById('account-form-mode').value = mode;
+                
+                const usernameInput = document.getElementById('account-username');
+                
+                if(mode === 'edit') {
+                    accountModal.querySelector('h2').textContent = 'Edit Account';
+                    usernameInput.value = data.username;
+                    usernameInput.readOnly = true; // Don't allow editing username (primary key)
+                    document.getElementById('account-api-key').value = data.api_key;
+                    document.getElementById('account-api-secret').value = data.api_secret;
+                    document.getElementById('account-access-token').value = data.access_token;
+                    document.getElementById('account-access-token-secret').value = data.access_token_secret;
+                    document.getElementById('account-bearer-token').value = data.bearer_token || '';
+                } else {
+                    accountModal.querySelector('h2').textContent = 'Add New Account';
+                    usernameInput.readOnly = false;
+                }
+                
+                accountModal.style.display = 'flex';
+            }
+
+            function closeAccountModal() {
+                accountModal.style.display = 'none';
+            }
+
+            document.getElementById('show-add-account-modal').addEventListener('click', () => showAccountModal('add'));
+            document.getElementById('close-account-modal').addEventListener('click', closeAccountModal);
+
+            // --- Form Submissions (Dashboard) ---
+
+            accountForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const mode = document.getElementById('account-form-mode').value;
+                
+                const data = {
+                    username: document.getElementById('account-username').value,
+                    api_key: document.getElementById('account-api-key').value,
+                    api_secret: document.getElementById('account-api-secret').value,
+                    access_token: document.getElementById('account-access-token').value,
+                    access_token_secret: document.getElementById('account-access-token-secret').value,
+                    bearer_token: document.getElementById('account-bearer-token').value || null
+                };
+                
+                let endpoint = (mode === 'edit') ? '/api/update_account' : '/api/add_account';
+                
+                const result = await apiRequest(endpoint, {
+                    method: 'POST',
+                    body: data
+                });
+
+                if (result) {
+                    showToast(result.message, 'success');
+                    closeAccountModal();
+                    loadAccounts();
+                    loadStatus();
+                }
+            });
+            
+            addTweetForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const tweet_text = document.getElementById('add-tweet-text').value;
+                if(!tweet_text.trim()) return;
+
+                const result = await apiRequest('/api/add_tweet', {
+                    method: 'POST',
+                    body: { tweet_text }
+                });
+
+                if (result) {
+                    showToast(result.message, 'success');
+                    addTweetForm.reset();
+                    loadTweets();
+                    loadStatus();
+                }
+            });
+
+            scheduleForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const dateVal = document.getElementById('schedule-date').value;
+                const timeVal = document.getElementById('schedule-time').value;
+
+                if(!dateVal || !timeVal) {
+                    showToast('Please select a valid date and time', 'error');
+                    return;
+                }
+
+                // Convert YYYY-MM-DD and HH:MM to the format our backend needs
+                // YYYY-MM-DD and HH:MM (which we convert to %I:%M %p)
+                const [year, month, day] = dateVal.split('-');
+                const [hour, minute] = timeVal.split(':');
+                
+                const dateObj = new Date(year, month - 1, day, hour, minute);
+                
+                const data = {
+                    date: dateObj.toLocaleDateString('en-CA'), // YYYY-MM-DD
+                    time: dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).split(' ')[0], // HH:MM
+                    ampm: dateObj.toLocaleTimeString('en-US', { hour12: true }).split(' ')[1] // AM/PM
+                };
+
+                const result = await apiRequest('/api/schedule_tweets', {
+                    method: 'POST',
+                    body: data
+                });
+                
+                if (result) {
+                    showToast(result.message, 'success');
+                    scheduleForm.reset();
+                    loadTweets();
+                    loadStatus();
+                }
+            });
+
+            deleteAllTweetsBtn.addEventListener('click', async () => {
+                if(!confirm('Are you sure you want to delete ALL non-posted tweets? This cannot be undone.')) {
+                    return;
+                }
+                
+                const result = await apiRequest('/api/delete_all_tweets', { method: 'POST' });
+                if(result) {
+                    showToast(result.message, 'success');
+                    loadTweets();
+                    loadStatus();
+                }
+            });
+
+            // --- Table Action Listeners (Event Delegation) ---
+
+            accountsTableBody.addEventListener('click', async (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const username = target.dataset.username;
+
+                if (target.classList.contains('delete')) {
+                    if (!confirm(`Are you sure you want to delete @${username}? This will also delete all its scheduled (non-posted) tweets.`)) {
+                        return;
+                    }
+                    const result = await apiRequest('/api/delete_account', {
+                        method: 'POST',
+                        body: { username }
+                    });
+                    if (result) {
+                        showToast(result.message, 'success');
+                        loadAccounts();
+                        loadStatus();
+                        loadTweets(); // Reload tweets as some may be deleted
+                    }
+                }
+                
+                if(target.classList.contains('edit')) {
+                    const data = await apiRequest(`/api/get_account_details/${username}`);
+                    if(data) {
+                        showAccountModal('edit', data);
+                    }
+                }
+            });
+
+            tweetsTableBody.addEventListener('click', async (e) => {
+                const target = e.target.closest('button.delete');
+                if (!target) return;
+                
+                const tweetId = target.dataset.tweetId;
+                if (!confirm(`Are you sure you want to delete tweet ID ${tweetId}?`)) {
+                    return;
+                }
+                
+                const result = await apiRequest('/api/delete_tweet', {
+                    method: 'POST',
+                    body: { tweet_id: parseInt(tweetId) }
+                });
+                if (result) {
+                    showToast(result.message, 'success');
+                    loadTweets();
+                    loadStatus();
+                }
+            });
+            
+            // --- Initial Load ---
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
