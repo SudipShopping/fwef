@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashAutomationPlus+</title>
+    <!-- Added Google Font 'Inter' for a more modern feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* --- New Modern Color Palette --- */
+            --primary-color: #00c6ff;
+            --primary-hover: #00a2d1;
+            --dark-bg: #111827; /* Near black, slightly blue */
+            --medium-bg: #1F2937;
+            --light-bg: #374151;
+            --text-color: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --error-color: #f43f5e; /* Brighter red */
+            --error-hover: #be123c;
+            --success-color: #10b981; /* Brighter green */
+            --warn-color: #f59e0b; /* Brighter yellow */
+            
+            /* --- Glassmorphism Variables --- */
+            --glass-bg: rgba(31, 41, 55, 0.6); /* Semi-transparent medium-bg */
+            --glass-border: rgba(255, 255, 255, 0.15);
+            
+            /* --- Sizing & Font --- */
+            --border-radius: 12px; /* Softened corners */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+            background-size: cover;
+            opacity: 0.15; /* Default opacity for auth pages */
+            filter: blur(10px); /* Increased blur for better glass effect */
+            transition: opacity 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        /* --- Glassmorphism Auth Container --- */
+        .auth-container {
+            max-width: 420px;
+            margin: 40px auto;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .auth-container h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700; /* Bolder */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* --- Modern Form Inputs --- */
+        .form-group input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.2); /* Darker, translucent */
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            font-size: 16px;
+            font-family: var(--font-family);
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- Modern Buttons with Hover --- */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative; /* For loader */
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-bg);
+        }
+        .btn-secondary:hover {
+            background-color: #4a4a4a;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-danger {
+            background-color: var(--error-color);
+        }
+        .btn-danger:hover {
+            background-color: var(--error-hover);
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2);
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        #dashboard-page {
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 20px;
+            transition: color 0.2s ease;
+        }
+        nav button:hover {
+            color: var(--primary-color);
+        }
+        #logout-button {
+            color: var(--error-color);
+        }
+        #logout-button:hover {
+            color: #ff7777;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 992px) {
+            .grid-container {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        /* --- Glassmorphism Card --- */
+        .card {
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 {
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        #status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            background-color: rgba(0, 0, 0, 0.2); /* Darker inset */
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+        }
+        .status-item h3 {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .status-item p {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .status-item p.connected { color: var(--success-color); }
+        .status-item p.disconnected { color: var(--error-color); }
+
+        textarea {
+            min-height: 120px;
+            background-color: rgba(0, 0, 0, 0.2);
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        /* --- Modern Table --- */
+        .table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            /* Add a mask for fading scroll */
+            -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            vertical-align: middle;
+        }
+        
+        thead th {
+            background-color: var(--glass-bg); /* Glassy header */
+            backdrop-filter: blur(5px);
+            color: var(--text-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        tbody tr {
+            background-color: transparent;
+            transition: background-color 0.2s ease;
+        }
+        tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tweet-text {
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+            max-width: 300px;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-badge.pending { background-color: #4a4a4a; color: #f0f0f0; }
+        .status-badge.scheduled { background-color: var(--warn-color); color: #000; }
+        .status-badge.posted { background-color: var(--success-color); color: #fff; }
+        .status-badge.failed { background-color: var(--error-color); color: #fff; }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 18px; /* Bigger icons */
+            transition: all 0.2s ease;
+        }
+        .action-btn.delete { color: var(--error-color); }
+        .action-btn.delete:hover { color: #ff7777; transform: scale(1.1); }
+        .action-btn.edit { color: var(--primary-color); }
+        .action-btn.edit:hover { color: #55ccff; transform: scale(1.1); }
+
+        /* --- Modern Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        .close-btn {
+            color: var(--text-muted);
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .close-btn:hover {
+            color: var(--text-color);
+        }
+
+        /* --- Modern Toast --- */
+        #toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: bottom 0.5s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+        }
+        #toast.show {
+            bottom: 30px;
+        }
+        #toast.success { background-color: var(--success-color); color: #fff; }
+        #toast.error { background-color: var(--error-color); color: #fff; }
+
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+
+        .auth-container.active {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .disclaimer {
+            background-color: rgba(245, 158, 11, 0.1); /* --warn-color with alpha */
+            border: 1px solid var(--warn-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        .disclaimer p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        .disclaimer b {
+            color: var(--warn-color);
+        }
+
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 30px 20px 20px 20px;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 30px;
+            color: var(--text-muted);
+        }
+        .footer-links {
+            margin-bottom: 15px;
+        }
+        .footer-links a, .footer-links span {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 14px;
+        }
+        .footer-links a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        .footer-credit {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .auth-container .footer-credit {
+             margin-top: 25px;
+             text-align: center;
+        }
+
+        /* --- Loading Spinner for Buttons --- */
+        .btn-loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* --- Mobile Responsive Improvements --- */
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 20px;
+                margin: 20px; /* Reduced margin for small screens */
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            #status-grid {
+                grid-template-columns: 1fr; /* Stack status items */
+            }
+
+            .card h2, .modal-header h2 {
+                font-size: 1.25rem; /* Slightly smaller titles */
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 12px;
+                font-size: 15px;
+            }
+
+            .table-wrapper {
+                /* Allow scrolling horizontally on small screens if table is too wide */
+                overflow-x: auto;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    
+    <video autoplay loop muted playsinline id="bg-video">
+        <source src="https://videos.pexels.com/video-files/3254006/3254006-hd_1920_1080_25fps.mp4" type="video/mp4">
+    </video>
+
+    <div id="login-page" class="auth-container page">
+        <form id="login-form">
+            <h1>FlashAutomationPlus+</h1>
+            <div class="disclaimer">
+                <p><b>Warning:</b> This tool uses official APIs. However, automation can still violate platform Terms of Service. Use at your own risk. The admin is not responsible for any suspended accounts.</p>
+            </div>
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="auth-link">
+                <a href="#" id="show-forgot-link">Forgot Password?</a>
+            </div>
+            <div class="auth-link" style="margin-top: 10px;">
+                Don't have an account? <a href="#" id="show-signup-link">Sign Up</a>
+            </div>
+        </form>
+        <div class="footer-credit">
+            Created with ❤️ by Sudip
+        </div>
+    </div>
+
+    <div id="signup-page" class="auth-container page">
+        <form id="signup-form">
+            <h1>Create Account</h1>
+            <div class="disclaimer">
+                <p><b>Warning:</b> This tool uses official APIs. However, automation can still violate platform Terms of Service. Use at your own risk. The admin is not responsible for any suspended accounts.</p>
+            </div>
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-key">Sign Up Key (from Telegram Bot)</label>
+                <input type="text" id="signup-key" required>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+            <div class="auth-link">
+                Already have an account? <a href="#" id="show-login-link">Login</a>
+            </div>
+        </form>
+        <div class="footer-credit">
+            Created with ❤️ by Sudip
+        </div>
+    </div>
+
+    <div id="forgot-page" class="auth-container page">
+        <form id="forgot-form-email">
+            <h1>Forgot Password</h1>
+            <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">
+                Enter your email. An admin will be notified to send you a 4-digit code.
+            </p>
+            <div class="form-group">
+                <label for="forgot-email">Email</label>
+                <input type="email" id="forgot-email" required>
+            </div>
+            <button type="submit" class="btn">Send Code Request</button>
+            <div class="auth-link">
+                <a href="#" id="show-login-link-2">Back to Login</a>
+            </div>
+        </form>
+        <form id="forgot-form-reset" class="hidden">
+            <h1>Reset Password</h1>
+            <div class="form-group">
+                <label for="forgot-code">4-Digit Code (from Email)</label>
+                <input type="text" id="forgot-code" required>
+            </div>
+            <div class="form-group">
+                <label for="forgot-new-password">New Password</label>
+                <input type="password" id="forgot-new-password" required>
+            </div>
+            <button type="submit" class="btn">Reset Password</button>
+            <div class="auth-link">
+                <a href="#" id="show-login-link-3">Back to Login</a>
+            </div>
+        </form>
+        <div class="footer-credit">
+            Created with ❤️ by Sudip
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="container page">
+        <header>
+            <h1>FlashAutomation+</h1>
+            <nav>
+                <button id="refresh-button">🔄 Refresh</button>
+                <button id="logout-button">Logout</button>
+            </nav>
+        </header>
+
+        <div class="grid-container">
+            <div class="left-column">
+                <div class="card">
+                    <h2>Quick Status</h2>
+                    <div id="status-grid">
+                        <div class="status-item">
+                            <h3>Accounts</h3>
+                            <p id="status-accounts">0</p>
+                        </div>
+                        <div class="status-item">
+                            <h3>Pending Tweets</h3>
+                            <p id="status-pending">0</p>
+                        </div>
+                        <div class="status-item">
+                            <h3>Link Bot</h3>
+                            <p id="status-linkbot" class="disconnected">Offline</p>
+                        </div>
+                        <div class="status-item">
+                            <h3>Server Time</h3>
+                            <p id="status-time" style="font-size: 14px;">--:--:--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 30px;">
+                    <h2>Add Tweet(s)</h2>
+                    <form id="add-tweet-form">
+                        <div class="form-group">
+                            <label for="add-tweet-text">Tweet Text (separate multiple with a blank line)</label>
+                            <textarea id="add-tweet-text" rows="5"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Save Tweet(s)</button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin-top: 30px;">
+                    <h2>Mass Schedule</h2>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">
+                        This will schedule your pending tweets (oldest first) to your accounts (oldest first).
+                        If you have more tweets than accounts, the extra tweets will be <b>deleted</b>.
+                    </p>
+                    <form id="schedule-form">
+                        <div class="form-group">
+                            <label for="schedule-date">Date (IST)</label>
+                            <input type="date" id="schedule-date" required class="form-group input">
+                        </div>
+                        <div class="form-group">
+                            <label for="schedule-time">Time (IST)</label>
+                            <input type="time" id="schedule-time" required class="form-group input">
+                        </div>
+                        <button type="submit" class="btn">Schedule Tweets</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <h2 style="border: none; margin: 0; padding: 0;">Accounts</h2>
+                        <button class="btn btn-secondary" id="show-add-account-modal" style="width: auto; padding: 10px 15px;">+ Add Account</button>
+                    </div>
+                    <div class="table-wrapper" style="margin-top: 20px;">
+                        <table id="accounts-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>API Key</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                        <h2 style="border: none; margin: 0; padding: 0;">Tweets</h2>
+                        <button class="btn btn-danger" id="delete-all-tweets-btn" style="width: auto; padding: 10px 15px;">Delete All</button>
+                    </div>
+                    <div class="table-wrapper" style="margin-top: 20px; max-height: 600px;">
+                        <table id="tweets-table">
+                            <thead>
+                                <tr>
+                                    <th>Tweet</th>
+                                    <th>Status</th>
+                                    <th>Account</th>
+                                    <th>Scheduled For (IST)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-links">
+                <a href="https://t.me/TweetAutomation_bot" target="_blank">Telegram Bot</a>
+                <span>&bull;</span>
+                <a href="https://t.me/flashautomationplus" target="_blank">Channel</a>
+                <span>&bull;</span>
+                <a href="mailto:axl200ff@gmail.com">Contact Admin</a>
+            </div>
+            <div class="footer-credit">
+                Created with ❤️ by Sudip
+            </div>
+        </footer>
+    </div>
+
+    <!-- Add/Edit Account Modal -->
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="account-modal-title">Add New Account</h2>
+                <span class="close-btn" id="close-account-modal">&times;</span>
+            </div>
+            <form id="account-form">
+                <input type="hidden" id="account-form-mode" value="add">
+                
+                <div class="form-group">
+                    <label for="account-username">X Username (e.g., myhandle)</label>
+                    <input type="text" id="account-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-api-key">API Key (Consumer Key)</label>
+                    <input type="password" id="account-api-key" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-api-secret">API Secret (Consumer Secret)</label>
+                    <input type="password" id="account-api-secret" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-access-token">Access Token</label>
+                    <input type="password" id="account-access-token" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-access-token-secret">Access Token Secret</label>
+                    <input type="password" id="account-access-token-secret" required>
+                </div>
+                <div class="form-group">
+                    <label for="account-bearer-token">Bearer Token (Optional)</label>
+                    <input type="password" id="account-bearer-token">
+                </div>
+                <button type="submit" class="btn">Save Account</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- === NEW: Custom Confirm Modal === -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2 id="confirm-modal-title">Are you sure?</h2>
+                <span class="close-btn" id="close-confirm-modal">&times;</span>
+            </div>
+            <p id="confirm-modal-text" style="color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;">This action cannot be undone.</p>
+            <div style="display: flex; gap: 15px;">
+                <button id="confirm-modal-cancel" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+                <button id="confirm-modal-confirm" class="btn btn-danger" style="flex: 1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <!-- === End Custom Confirm Modal === -->
+
+    <div id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- State & Config ---
+            const API_BASE = ''; // API is on the same origin
+            let ACCESS_KEY = localStorage.getItem('access_key');
+
+            // --- Page Selectors ---
+            const pages = {
+                login: document.getElementById('login-page'),
+                signup: document.getElementById('signup-page'),
+                forgot: document.getElementById('forgot-page'),
+                dashboard: document.getElementById('dashboard-page')
+            };
+
+            // --- Auth Forms ---
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const forgotFormEmail = document.getElementById('forgot-form-email');
+            const forgotFormReset = document.getElementById('forgot-form-reset');
+
+            // --- Auth Links ---
+            document.getElementById('show-signup-link').addEventListener('click', (e) => { e.preventDefault(); showPage('signup'); });
+            document.getElementById('show-login-link').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-login-link-2').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-login-link-3').addEventListener('click', (e) => { e.preventDefault(); showPage('login'); });
+            document.getElementById('show-forgot-link').addEventListener('click', (e) => { e.preventDefault(); showPage('forgot'); });
+
+            // --- Dashboard Elements ---
+            const logoutButton = document.getElementById('logout-button');
+            const refreshButton = document.getElementById('refresh-button');
+            const statusAccounts = document.getElementById('status-accounts');
+            const statusPending = document.getElementById('status-pending');
+            const statusLinkbot = document.getElementById('status-linkbot');
+            const statusTime = document.getElementById('status-time');
+            const accountsTableBody = document.querySelector('#accounts-table tbody');
+            const tweetsTableBody = document.querySelector('#tweets-table tbody');
+
+            // --- Modals & Forms ---
+            const accountModal = document.getElementById('account-modal');
+            const accountForm = document.getElementById('account-form');
+            const addTweetForm = document.getElementById('add-tweet-form');
+            const scheduleForm = document.getElementById('schedule-form');
+            const deleteAllTweetsBtn = document.getElementById('delete-all-tweets-btn');
+
+            // --- NEW: Confirm Modal Elements ---
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmModalTitle = document.getElementById('confirm-modal-title');
+            const confirmModalText = document.getElementById('confirm-modal-text');
+            const confirmModalCancel = document.getElementById('confirm-modal-cancel');
+            const confirmModalConfirm = document.getElementById('confirm-modal-confirm');
+            const confirmModalClose = document.getElementById('close-confirm-modal');
+            let confirmCallback = null;
+
+            // --- Toast ---
+            const toast = document.getElementById('toast');
+
+            // --- Utility Functions ---
+
+            function showPage(pageName) {
+                const bgVideo = document.getElementById('bg-video');
+                bgVideo.style.display = 'block'; // Ensure video is always displayed
+
+                if (pageName === 'dashboard') {
+                    bgVideo.style.opacity = '0.08'; // Less opacity for dashboard
+                } else {
+                    bgVideo.style.opacity = '0.15'; // Original opacity for auth
+                }
+
+                Object.keys(pages).forEach(key => {
+                    pages[key].classList.remove('active');
+                });
+                pages[pageName].classList.add('active');
+
+                if(pageName === 'forgot') {
+                    forgotFormEmail.classList.remove('hidden');
+                    forgotFormReset.classList.add('hidden');
+                    forgotFormEmail.reset();
+                    forgotFormReset.reset();
+                }
+            }
+
+            function showToast(message, type = 'success') {
+                toast.textContent = message;
+                toast.className = type;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            async function apiRequest(endpoint, options = {}) {
+                try {
+                    options.headers = options.headers || {};
+                    options.headers['X-Access-Key'] = ACCESS_KEY;
+                    if (options.body) {
+                        options.headers['Content-Type'] = 'application/json';
+                        options.body = JSON.stringify(options.body);
+                    }
+
+                    const response = await fetch(`${API_BASE}${endpoint}`, options);
+
+                    if (response.status === 401) {
+                        logout();
+                        return null;
+                    }
+                    
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'An error occurred');
+                    }
+                    
+                    return data;
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                    return null;
+                }
+            }
+
+            function setButtonLoading(button, isLoading, originalText = null) {
+                if (!button) return; // Safety check
+                
+                if (isLoading) {
+                    button.dataset.originalText = button.innerHTML;
+                    button.disabled = true;
+                    
+                    // Clear text and add spinner
+                    button.innerHTML = '';
+                    const spinner = document.createElement('span');
+                    spinner.className = 'btn-loader';
+                    spinner.style.marginLeft = '0'; // Center spinner
+                    button.appendChild(spinner);
+
+                } else {
+                    button.disabled = false;
+                    
+                    // Remove spinner
+                    const spinner = button.querySelector('.btn-loader');
+                    if (spinner) spinner.remove();
+                    
+                    // Restore original text
+                    if (originalText) {
+                        button.innerHTML = originalText;
+                    } else if (button.dataset.originalText) {
+                        button.innerHTML = button.dataset.originalText;
+                    }
+                }
+            }
+
+            // --- NEW: Custom Confirm Modal Logic ---
+            function showConfirm(title, text, onConfirm) {
+                confirmModalTitle.textContent = title;
+                confirmModalText.textContent = text;
+                confirmCallback = onConfirm;
+                confirmModal.style.display = 'flex';
+            }
+
+            function closeConfirm() {
+                confirmModal.style.display = 'none';
+                confirmCallback = null;
+            }
+
+            confirmModalCancel.addEventListener('click', closeConfirm);
+            confirmModalClose.addEventListener('click', closeConfirm);
+
+            confirmModalConfirm.addEventListener('click', () => {
+                if (confirmCallback) {
+                    confirmCallback(); // Execute the stored callback
+                }
+                closeConfirm();
+            });
+            // --- End Custom Confirm Modal Logic ---
+
+
+            // --- Auth Logic ---
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                setButtonLoading(submitBtn, true);
+
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/login`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    ACCESS_KEY = data.access_key;
+                    localStorage.setItem('access_key', ACCESS_KEY);
+                    showToast('Login successful!', 'success');
+                    initializeApp();
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            });
+
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                setButtonLoading(submitBtn, true);
+
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const web_key = document.getElementById('signup-key').value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/signup`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, password, web_key })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    showToast('Sign up successful! Please log in.', 'success');
+                    showPage('login');
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            });
+
+            forgotFormEmail.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                setButtonLoading(submitBtn, true);
+
+                const email = document.getElementById('forgot-email').value;
+                try {
+                    const response = await fetch(`${API_BASE}/api/forgot_password`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    showToast(data.message, 'success');
+                    forgotFormEmail.classList.add('hidden');
+                    forgotFormReset.classList.remove('hidden');
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            });
+
+            forgotFormReset.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                setButtonLoading(submitBtn, true);
+
+                const email = document.getElementById('forgot-email').value;
+                const code = document.getElementById('forgot-code').value;
+                const new_password = document.getElementById('forgot-new-password').value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/api/reset_password`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email, code, new_password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    
+                    showToast(data.message, 'success');
+                    showPage('login');
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+            });
+
+            function logout() {
+                ACCESS_KEY = null;
+                localStorage.removeItem('access_key');
+                showPage('login');
+            }
+            logoutButton.addEventListener('click', logout);
+            refreshButton.addEventListener('click', loadDashboardData);
+
+            // --- Dashboard Logic ---
+
+            async function initializeApp() {
+                if (ACCESS_KEY) {
+                    const data = await apiRequest('/api/verify_key');
+                    if (data && data.status === 'ok') {
+                        showPage('dashboard');
+                        loadDashboardData();
+                    } else {
+                        logout();
+                    }
+                } else {
+                    showPage('login');
+                }
+            }
+
+            async function loadDashboardData() {
+                loadStatus();
+                loadAccounts();
+                loadTweets();
+            }
+
+            async function loadStatus() {
+                const data = await apiRequest('/api/status');
+                if (!data) return;
+                
+                statusAccounts.textContent = data.account_count;
+                statusPending.textContent = data.pending_tweets;
+                statusTime.textContent = data.server_time_ist;
+                if(data.link_bot_connected) {
+                    statusLinkbot.textContent = 'Online';
+                    statusLinkbot.className = 'connected';
+                } else {
+                    statusLinkbot.textContent = 'Offline';
+                    statusLinkbot.className = 'disconnected';
+                }
+            }
+
+            async function loadAccounts() {
+                const data = await apiRequest('/api/get_accounts');
+                if (!data) return;
+                
+                accountsTableBody.innerHTML = '';
+                if(data.length === 0) {
+                    accountsTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No accounts added.</td></tr>';
+                    return;
+                }
+                
+                data.forEach(acc => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>@${acc.username}</td>
+                        <td>${acc.api_key.substring(0, 4)}...${acc.api_key.slice(-4)}</td>
+                        <td>
+                            <button class="action-btn edit" data-username="${acc.username}">✏️</button>
+                            <button class="action-btn delete" data-username="${acc.username}">🗑️</button>
+                        </td>
+                    `;
+                    accountsTableBody.appendChild(tr);
+                });
+            }
+
+            async function loadTweets() {
+                const data = await apiRequest('/api/get_tweets');
+                if (!data) return;
+
+                tweetsTableBody.innerHTML = '';
+                if(data.length === 0) {
+                    tweetsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No tweets found.</td></tr>';
+                    return;
+                }
+                
+                data.forEach(tweet => {
+                    const tr = document.createElement('tr');
+                    
+                    let statusClass = 'pending';
+                    let statusText = tweet.post_status;
+                    let scheduledTime = '--';
+                    
+                    if(tweet.post_status === 'PENDING' && tweet.scheduled_time) {
+                        statusClass = 'scheduled';
+                        statusText = 'SCHEDULED';
+                    } else if (tweet.post_status === 'POSTED') {
+                        statusClass = 'posted';
+                    } else if (tweet.post_status === 'FAILED') {
+                        statusClass = 'failed';
+                    }
+                    
+                    if(tweet.scheduled_time) {
+                        try {
+                            scheduledTime = new Date(tweet.scheduled_time).toLocaleString('en-IN', {
+                                timeZone: 'Asia/Kolkata',
+                                year: 'numeric', month: 'short', day: 'numeric',
+                                hour: 'numeric', minute: '2-digit', hour12: true
+                            });
+                        } catch(e) { scheduledTime = 'Invalid Date'; }
+                    }
+
+                    tr.innerHTML = `
+                        <td><div class="tweet-text">${escapeHTML(tweet.tweet_text)}</div></td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${tweet.account_username ? '@'+tweet.account_username : '--'}</td>
+                        <td>${scheduledTime}</td>
+                        <td>
+                            ${tweet.post_status !== 'POSTED' ?
+                                `<button class="action-btn delete" data-tweet-id="${tweet.id}">🗑️</button>` :
+                                (tweet.post_link ? `<a href="${tweet.post_link}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">View</a>` : 'Posted')}
+                        </td>
+                    `;
+                    tweetsTableBody.appendChild(tr);
+                });
+            }
+
+            function escapeHTML(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"']/g, function(m) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    }[m];
+                });
+            }
+
+            // --- Modal Handling ---
+            function showAccountModal(mode = 'add', data = {}) {
+                accountForm.reset();
+                document.getElementById('account-form-mode').value = mode;
+                
+                const usernameInput = document.getElementById('account-username');
+                
+                if(mode === 'edit') {
+                    accountModal.querySelector('h2').textContent = 'Edit Account';
+                    usernameInput.value = data.username;
+                    usernameInput.readOnly = true;
+                    document.getElementById('account-api-key').value = data.api_key;
+                    document.getElementById('account-api-secret').value = data.api_secret;
+                    document.getElementById('account-access-token').value = data.access_token;
+                    document.getElementById('account-access-token-secret').value = data.access_token_secret;
+                    document.getElementById('account-bearer-token').value = data.bearer_token || '';
+                } else {
+                    accountModal.querySelector('h2').textContent = 'Add New Account';
+                    usernameInput.readOnly = false;
+                }
+                
+                accountModal.style.display = 'flex';
+            }
+
+            function closeAccountModal() {
+                accountModal.style.display = 'none';
+            }
+
+            document.getElementById('show-add-account-modal').addEventListener('click', () => showAccountModal('add'));
+            document.getElementById('close-account-modal').addEventListener('click', closeAccountModal);
+
+            // --- Form Submissions (Dashboard) ---
+
+            accountForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                setButtonLoading(submitBtn, true);
+                
+                const mode = document.getElementById('account-form-mode').value;
+                
+                const data = {
+                    username: document.getElementById('account-username').value,
+                    api_key: document.getElementById('account-api-key').value,
+                    api_secret: document.getElementById('account-api-secret').value,
+                    access_token: document.getElementById('account-access-token').value,
+                    access_token_secret: document.getElementById('account-access-token-secret').value,
+                    bearer_token: document.getElementById('account-bearer-token').value || null
+                };
+                
+                let endpoint = (mode === 'edit') ? '/api/update_account' : '/api/add_account';
+                
+                let result;
+                try {
+                    result = await apiRequest(endpoint, {
+                        method: 'POST',
+                        body: data
+                    });
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+
+                if (result) {
+                    showToast(result.message, 'success');
+                    closeAccountModal();
+                    loadAccounts();
+                    loadStatus();
+                }
+            });
+            
+            addTweetForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const tweet_text = document.getElementById('add-tweet-text').value;
+
+                if(!tweet_text.trim()) {
+                    showToast('Tweet text cannot be empty', 'error');
+                    return;
+                }
+                
+                setButtonLoading(submitBtn, true);
+
+                let result;
+                try {
+                    result = await apiRequest('/api/add_tweet', {
+                        method: 'POST',
+                        body: { tweet_text }
+                    });
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+
+                if (result) {
+                    showToast(result.message, 'success');
+                    addTweetForm.reset();
+                    loadTweets();
+                    loadStatus();
+                }
+            });
+
+            scheduleForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const dateVal = document.getElementById('schedule-date').value;
+                const timeVal = document.getElementById('schedule-time').value;
+
+                if(!dateVal || !timeVal) {
+                    showToast('Please select a valid date and time', 'error');
+                    return;
+                }
+                
+                setButtonLoading(submitBtn, true);
+                
+                const [year, month, day] = dateVal.split('-');
+                const [hour, minute] = timeVal.split(':');
+                
+                const dateObj = new Date(year, month - 1, day, hour, minute);
+                
+                const data = {
+                    date: dateObj.toLocaleDateString('en-CA'), // YYYY-MM-DD
+                    time: dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }).split(' ')[0], // HH:MM
+                    ampm: dateObj.toLocaleTimeString('en-US', { hour12: true }).split(' ')[1] // AM/PM
+                };
+
+                let result;
+                try {
+                    result = await apiRequest('/api/schedule_tweets', {
+                        method: 'POST',
+                        body: data
+                    });
+                } finally {
+                    setButtonLoading(submitBtn, false);
+                }
+                
+                if (result) {
+                    showToast(result.message, 'success');
+                    scheduleForm.reset();
+                    loadTweets();
+                    loadStatus();
+                }
+            });
+
+            deleteAllTweetsBtn.addEventListener('click', () => {
+                // MODIFIED: Use custom confirm modal
+                showConfirm('Delete All Tweets?', 'Are you sure you want to delete ALL non-posted tweets? This cannot be undone.', async () => {
+                    setButtonLoading(deleteAllTweetsBtn, true);
+                    
+                    let result;
+                    try {
+                        result = await apiRequest('/api/delete_all_tweets', { method: 'POST' });
+                    } finally {
+                        setButtonLoading(deleteAllTweetsBtn, false);
+                    }
+                    
+                    if(result) {
+                        showToast(result.message, 'success');
+                        loadTweets();
+                        loadStatus();
+                    }
+                });
+            });
+
+            // --- Table Action Listeners (Event Delegation) ---
+
+            accountsTableBody.addEventListener('click', async (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+
+                const username = target.dataset.username;
+
+                if (target.classList.contains('delete')) {
+                    // MODIFIED: Use custom confirm modal
+                    showConfirm(`Delete @${username}?`, 'This will also delete all its scheduled (non-posted) tweets. Are you sure?', async () => {
+                        setButtonLoading(target, true, '🗑️'); // Pass original text
+                        
+                        const result = await apiRequest('/api/delete_account', {
+                            method: 'POST',
+                            body: { username }
+                        });
+                        
+                        // Note: We don't stop loading here, as the row will be removed.
+                        // If the request fails, the apiRequest will show a toast,
+                        // and we can stop the loading state.
+                        
+                        if (result) {
+                            showToast(result.message, 'success');
+                            loadAccounts();
+                            loadStatus();
+                            loadTweets();
+                        } else {
+                            setButtonLoading(target, false, '🗑️'); // Restore on fail
+                        }
+                    });
+                }
+                
+                if(target.classList.contains('edit')) {
+                    setButtonLoading(target, true, '✏️');
+                    
+                    const data = await apiRequest(`/api/get_account_details/${username}`);
+                    
+                    setButtonLoading(target, false, '✏️');
+                    
+                    if(data) {
+                        showAccountModal('edit', data);
+                    }
+                }
+            });
+
+            tweetsTableBody.addEventListener('click', async (e) => {
+                const target = e.target.closest('button.delete');
+                if (!target) return;
+                
+                const tweetId = target.dataset.tweetId;
+                
+                // MODIFIED: Use custom confirm modal
+                showConfirm(`Delete Tweet ${tweetId}?`, 'Are you sure you want to delete this tweet?', async () => {
+                    setButtonLoading(target, true, '🗑️');
+                    
+                    const result = await apiRequest('/api/delete_tweet', {
+                        method: 'POST',
+                        body: { tweet_id: parseInt(tweetId) }
+                    });
+                    
+                    if (result) {
+                        showToast(result.message, 'success');
+                        loadTweets();
+                        loadStatus();
+                    } else {
+                        setButtonLoading(target, false, '🗑️'); // Restore on fail
+                    }
+                });
+            });
+            
+            // --- Initial Load ---
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
